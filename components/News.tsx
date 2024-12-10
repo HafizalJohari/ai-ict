@@ -36,7 +36,7 @@ export default function News() {
         // Fetch education news
         const eduResponse = await fetch('https://newsapi.org/v2/everything?' + new URLSearchParams({
           q: 'education malaysia',
-          language: 'en',
+          language: 'my',
           sortBy: 'publishedAt',
           apiKey: process.env.NEXT_PUBLIC_NEWS_API_KEY || '',
           pageSize: '5'

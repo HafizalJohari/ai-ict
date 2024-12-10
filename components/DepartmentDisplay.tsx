@@ -143,7 +143,8 @@ export default function DepartmentDisplay() {
     }
   }, [])
 
-  // Add ElevenLabs script
+  // ElevenLabs widget temporarily disabled
+  /*
   useEffect(() => {
     const script = document.createElement('script')
     script.src = 'https://elevenlabs.io/convai-widget/index.js'
@@ -162,6 +163,7 @@ export default function DepartmentDisplay() {
       }
     }
   }, [])
+  */
 
   if (enabledFeatures.length === 0) {
     return (

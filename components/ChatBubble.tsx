@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { X, Send, Loader2, PhoneCall } from 'lucide-react'
+import { X, Send, Loader2, MessageCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { ScrollArea } from '@/components/ui/scroll-area'
@@ -80,32 +80,32 @@ export default function ChatBubble() {
   }
 
   return (
-    <div className="fixed bottom-6 left-6 flex items-end">
+    <div className="fixed bottom-12 left-12 flex items-end">
       {showAlert && (
-        <div className="absolute bottom-20 bg-white rounded-3xl shadow-lg p-4 flex items-center gap-4 mb-2">
+        <div className="absolute bottom-32 bg-white/20 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/30 p-6 flex items-center gap-6 mb-4">
           <div className="relative">
             <Image
               src="/media/sara.png"
               alt="Sara AI Assistant"
-              width={48}
-              height={48}
-              className="rounded-full"
+              width={72}
+              height={72}
+              className="rounded-full ring-2 ring-white/50"
               priority
             />
           </div>
-          <div className="flex flex-col gap-1">
-            <p className="text-sm text-gray-600">Perlukan bantuan?</p>
+          <div className="flex flex-col gap-2">
+            <p className="text-lg text-white font-medium">Perlukan bantuan?</p>
             <Button 
               variant="default" 
-              className="bg-black text-white hover:bg-black/90 rounded-full flex items-center gap-2"
+              className="bg-white/20 backdrop-blur-md text-white hover:bg-white/30 rounded-full flex items-center gap-3 px-6 py-4 text-base border border-white/30"
               onClick={() => setIsOpen(true)}
             >
-              <PhoneCall className="h-4 w-4" />
-              Bercakap dengan Sara
+              <MessageCircle className="h-5 w-5" />
+              Chat dengan Sara
             </Button>
           </div>
           {/* Triangle pointer */}
-          <div className="absolute -bottom-2 left-10 w-4 h-4 bg-white transform rotate-45" />
+          <div className="absolute -bottom-3 left-16 w-6 h-6 bg-white/20 backdrop-blur-lg border-r border-b border-white/30 transform rotate-45" />
         </div>
       )}
       <Dialog open={isOpen} onOpenChange={(open) => {
@@ -115,41 +115,42 @@ export default function ChatBubble() {
         <DialogTrigger asChild>
           <Button
             size="icon"
-            className="h-14 w-14 rounded-full shadow-lg bg-transparent hover:bg-transparent transition-transform hover:scale-110 p-0 overflow-hidden"
+            className="h-36 w-36 rounded-full shadow-2xl bg-white/20 hover:bg-white/30 backdrop-blur-lg transition-all duration-300 hover:scale-110 p-0 overflow-hidden border border-white/30"
             onMouseEnter={() => setShowAlert(true)}
             onMouseLeave={() => !isOpen && setShowAlert(false)}
           >
             <Image
               src="/media/sara.png"
               alt="Sara AI Assistant"
-              width={56}
-              height={56}
-              className="object-cover"
+              width={128}
+              height={128}
+              className="object-cover rounded-full ring-4 ring-white/50"
               priority
             />
           </Button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-[500px] h-[600px] flex flex-col p-0">
-          <DialogHeader className="px-4 py-2 border-b">
-            <DialogTitle className="flex items-center gap-2">
+        <DialogContent className="sm:max-w-[800px] h-[600px] flex flex-col p-0">
+          <DialogHeader className="px-6 py-4 border-b">
+            <DialogTitle className="flex items-center gap-3">
               <Image
                 src="/media/sara.png"
                 alt="Sara AI Assistant"
-                width={24}
-                height={24}
+                width={32}
+                height={32}
                 className="rounded-full"
                 priority
               />
-              Sara - Pembantu ICT PPD JB
+              <span className="text-xl font-medium">Sara - Pembantu Pintar ICT PPD JB</span>
             </DialogTitle>
           </DialogHeader>
           
           {/* Chat Messages */}
-          <ScrollArea className="flex-1 p-4">
-            <div className="space-y-4">
+          <ScrollArea className="flex-1 p-6">
+            <div className="space-y-6">
               {messages.length === 0 ? (
-                <div className="text-center text-muted-foreground py-6">
-                  Salam! Saya Sara, pembantu ICT PPD JB. Ada yang boleh saya bantu?
+                <div className="text-center text-muted-foreground py-8 text-lg">
+                 <h3 className="text-xl">Salam! Saya Sara, pembantu pintar di ICT PPD JB. Boleh saya bantu?</h3>
+                 <br></br><br></br><p className="text-sm">Penafian: Seperti AI lain, Sara boleh melakukan kesilapan. Sila semak maklumat penting. Segala maklumat diperoleh melalui chatbot AI ini adalah bagi tujuan panduan umum sahaja dan bukan pandangan profesional. <br></br><br></br> Pihak PPDJB tidak akan bertanggungjawab atas sebarang kesilapan atau kesan yang timbul daripada penggunaan maklumat ini.</p>
                 </div>
               ) : (
                 messages.map((message, index) => (
@@ -160,21 +161,21 @@ export default function ChatBubble() {
                     }`}
                   >
                     <div
-                      className={`rounded-lg px-4 py-2 max-w-[80%] ${
+                      className={`rounded-xl px-6 py-4 max-w-[80%] ${
                         message.role === 'user'
                           ? 'bg-primary text-primary-foreground'
                           : 'bg-muted'
                       }`}
                     >
-                      <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                      <p className="text-base whitespace-pre-wrap">{message.content}</p>
                     </div>
                   </div>
                 ))
               )}
               {isLoading && (
                 <div className="flex justify-start">
-                  <div className="rounded-lg px-4 py-2 bg-muted">
-                    <Loader2 className="h-5 w-5 animate-spin" />
+                  <div className="rounded-xl px-6 py-4 bg-muted">
+                    <Loader2 className="h-6 w-6 animate-spin" />
                   </div>
                 </div>
               )}
@@ -182,24 +183,25 @@ export default function ChatBubble() {
           </ScrollArea>
 
           {/* Input Area */}
-          <div className="border-t p-4">
-            <div className="flex gap-2">
+          <div className="border-t p-6">
+            <div className="flex gap-3">
               <Textarea
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder="Taip mesej anda..."
-                className="min-h-[60px] max-h-[120px]"
+                className="min-h-[80px] max-h-[160px] text-base"
               />
               <Button
                 size="icon"
+                className="h-12 w-12"
                 onClick={handleSubmit}
                 disabled={!input.trim() || isLoading}
               >
-                <Send className="h-4 w-4" />
+                <Send className="h-6 w-6" />
               </Button>
             </div>
-            <p className="text-xs text-muted-foreground mt-2">
+            <p className="text-sm text-muted-foreground mt-3">
               Tekan Enter untuk hantar, Shift + Enter untuk baris baru
             </p>
           </div>
