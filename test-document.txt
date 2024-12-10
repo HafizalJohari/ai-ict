@@ -1,0 +1,19 @@
+ICT Support Procedures - PPD Johor Bahru
+
+Password Reset Procedure:
+1. Users must submit a password reset request through the helpdesk system
+2. Provide their staff ID and department
+3. Reset requests are processed within 24 hours
+4. New temporary passwords are sent via official email
+
+Printer Setup Guide:
+1. Network printers are available on 192.168.1.100
+2. Install printer drivers from \\server\drivers\printers
+3. Default settings: A4, duplex printing enabled
+4. Contact ext. 1234 for printer issues
+
+Email Access:
+1. Web access: https://mail.ppdjb.edu.my
+2. Mobile setup requires Exchange ActiveSync
+3. Maximum attachment size: 25MB
+4. Contact ict@ppdjb.edu.my for email issues 
