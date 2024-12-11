@@ -1,24 +1,9 @@
 'use client'
 
-import { useState } from 'react'
-import { useStaffStore, type Staff, type StaffStatus } from '@/lib/staffStore'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import { Edit2, Trash2, UserPlus, Search } from 'lucide-react'
+import { Search } from 'lucide-react'
 import {
   Table,
   TableBody,
@@ -28,103 +13,64 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-
-interface StaffFormData {
-  name: string
-  position: string
-  status: StaffStatus
-  department: string
-  email: string
-}
-
-const initialFormData: StaffFormData = {
-  name: '',
-  position: '',
-  status: 'available',
-  department: '',
-  email: '',
-}
+import type { StaffData } from '@/app/api/staff/route'
 
 export default function StaffPresence() {
-  const { staffList, addStaff, updateStaff, deleteStaff, updateStaffStatus } = useStaffStore()
-  const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const [editingStaffId, setEditingStaffId] = useState<string | null>(null)
-  const [formData, setFormData] = useState<StaffFormData>(initialFormData)
+  const [staffList, setStaffList] = useState<StaffData[]>([])
   const [searchQuery, setSearchQuery] = useState('')
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-  const handleOpenDialog = (staff?: Staff) => {
-    if (staff) {
-      setEditingStaffId(staff.id)
-      setFormData({
-        name: staff.name,
-        position: staff.position,
-        status: staff.status,
-        department: staff.department,
-        email: staff.email,
-      })
-    } else {
-      setEditingStaffId(null)
-      setFormData(initialFormData)
-    }
-    setIsDialogOpen(true)
-  }
-
-  const handleSubmit = () => {
-    if (!formData.name || !formData.email) return
-
-    if (editingStaffId) {
-      updateStaff(editingStaffId, formData)
-    } else {
-      addStaff(formData)
+  useEffect(() => {
+    const fetchStaffData = async () => {
+      try {
+        const response = await fetch('/api/staff')
+        if (!response.ok) throw new Error('Failed to fetch staff data')
+        const data = await response.json()
+        setStaffList(data)
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to fetch staff data')
+      } finally {
+        setLoading(false)
+      }
     }
 
-    setFormData(initialFormData)
-    setEditingStaffId(null)
-    setIsDialogOpen(false)
-  }
+    fetchStaffData()
+    // Refresh data every 5 minutes
+    const interval = setInterval(fetchStaffData, 5 * 60 * 1000)
+    return () => clearInterval(interval)
+  }, [])
 
-  const handleDelete = (staffId: string) => {
-    if (confirm('Are you sure you want to remove this staff member?')) {
-      deleteStaff(staffId)
-    }
-  }
-
-  const getStatusColor = (status: StaffStatus) => {
-    switch (status) {
-      case 'available':
-        return 'text-green-500'
-      case 'busy':
-        return 'text-red-500'
-      case 'cuti':
-        return 'text-lime-500'
-      case 'meeting':
-        return 'text-orange-500'
-  
-      default:
-        return 'text-gray-500'
-    }
+  const getStatusColor = (status: string) => {
+    const statusLower = status.toLowerCase()
+    if (statusLower.includes('available')) return 'text-green-500'
+    if (statusLower.includes('busy') || statusLower.includes('meeting')) return 'text-red-500'
+    if (statusLower.includes('cuti') || statusLower.includes('leave')) return 'text-lime-500'
+    return 'text-gray-500'
   }
 
   const filteredStaff = staffList.filter(staff => 
     staff.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     staff.position.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    staff.department.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    staff.email.toLowerCase().includes(searchQuery.toLowerCase())
+    staff.department.toLowerCase().includes(searchQuery.toLowerCase())
   )
+
+  if (error) {
+    return (
+      <Card className="bg-white/5 backdrop-blur-sm border-white/20">
+        <CardContent className="p-6">
+          <div className="text-center text-red-500">
+            {error}
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
 
   return (
     <Card className="bg-white/5 backdrop-blur-sm border-white/20">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-        <CardTitle className="text-lg font-medium text-slate-100">Staff Management</CardTitle>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => handleOpenDialog()}
-          className="flex items-center gap-2 whitespace-nowrap"
-        >
-          <UserPlus className="h-4 w-4" />
-          Add Staff
-        </Button>
+        <CardTitle className="text-lg font-medium text-slate-100">Staff Availability</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="relative">
@@ -137,85 +83,6 @@ export default function StaffPresence() {
           />
         </div>
 
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>
-                {editingStaffId ? 'Edit Staff Member' : 'Add New Staff Member'}
-              </DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4 mt-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Name</Label>
-                <Input
-                  id="name"
-                  value={formData.name}
-                  onChange={(e) =>
-                    setFormData((prev) => ({ ...prev, name: e.target.value }))
-                  }
-                  placeholder="Staff name"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) =>
-                    setFormData((prev) => ({ ...prev, email: e.target.value }))
-                  }
-                  placeholder="Email address"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="position">Position</Label>
-                <Input
-                  id="position"
-                  value={formData.position}
-                  onChange={(e) =>
-                    setFormData((prev) => ({ ...prev, position: e.target.value }))
-                  }
-                  placeholder="Staff position"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="department">Department</Label>
-                <Input
-                  id="department"
-                  value={formData.department}
-                  onChange={(e) =>
-                    setFormData((prev) => ({ ...prev, department: e.target.value }))
-                  }
-                  placeholder="Department"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="status">Status</Label>
-                <Select
-                  value={formData.status}
-                  onValueChange={(value: StaffStatus) =>
-                    setFormData((prev) => ({ ...prev, status: value }))
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="available">Available</SelectItem>
-                    <SelectItem value="busy">Busy</SelectItem>
-                    <SelectItem value="meeting">Mesyuarat</SelectItem>
-                    <SelectItem value="cuti">Cuti</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <Button onClick={handleSubmit} className="w-full">
-                {editingStaffId ? 'Update Staff Member' : 'Add Staff Member'}
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
-
         <div className="rounded-md border border-white/20">
           <Table>
             <TableHeader>
@@ -224,61 +91,37 @@ export default function StaffPresence() {
                 <TableHead>Position</TableHead>
                 <TableHead>Department</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead>Last Updated</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredStaff.length > 0 ? (
-                filteredStaff.map((staff) => (
-                  <TableRow key={staff.id} className="group">
+              {loading ? (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center h-24 text-slate-400">
+                    Loading staff data...
+                  </TableCell>
+                </TableRow>
+              ) : filteredStaff.length > 0 ? (
+                filteredStaff.map((staff, index) => (
+                  <TableRow key={index} className="group">
                     <TableCell className="font-medium">{staff.name}</TableCell>
                     <TableCell>{staff.position}</TableCell>
                     <TableCell>{staff.department}</TableCell>
                     <TableCell>
-                      <Select
-                        value={staff.status}
-                        onValueChange={(value: StaffStatus) =>
-                          updateStaffStatus(staff.id, value)
-                        }
-                      >
-                        <SelectTrigger className="h-8 w-[120px]">
-                          <div className="flex items-center gap-2">
-                            <span className={`h-2 w-2 rounded-full ${getStatusColor(staff.status)}`} />
-                            <SelectValue />
-                          </div>
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="available">Available</SelectItem>
-                          <SelectItem value="busy">Busy</SelectItem>
-                          <SelectItem value="meeting">Mesyuarat</SelectItem>
-                          <SelectItem value="cuti">Cuti</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleOpenDialog(staff)}
-                        >
-                          <Edit2 className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleDelete(staff.id)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
+                      <div className="flex items-center gap-2">
+                        <span className={`h-2 w-2 rounded-full ${getStatusColor(staff.status)} bg-current`} />
+                        <span className={getStatusColor(staff.status)}>{staff.status}</span>
                       </div>
+                    </TableCell>
+                    <TableCell className="text-sm text-slate-400">
+                      {new Date(staff.timestamp).toLocaleString()}
                     </TableCell>
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
                   <TableCell colSpan={5} className="text-center h-24 text-slate-400">
-                    {searchQuery ? 'No staff members found' : 'No staff members added yet'}
+                    {searchQuery ? 'No staff members found' : 'No staff members available'}
                   </TableCell>
                 </TableRow>
               )}
