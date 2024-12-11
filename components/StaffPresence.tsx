@@ -94,11 +94,12 @@ export default function StaffPresence() {
       case 'available':
         return 'text-green-500'
       case 'busy':
-        return 'text-yellow-500'
-      case 'offline':
-        return 'text-gray-500'
+        return 'text-red-500'
+      case 'cuti':
+        return 'text-lime-500'
       case 'meeting':
         return 'text-orange-500'
+  
       default:
         return 'text-gray-500'
     }
@@ -203,8 +204,8 @@ export default function StaffPresence() {
                   <SelectContent>
                     <SelectItem value="available">Available</SelectItem>
                     <SelectItem value="busy">Busy</SelectItem>
-                    <SelectItem value="meeting">Meeting</SelectItem>
-                    <SelectItem value="offline">Offline</SelectItem>
+                    <SelectItem value="meeting">Mesyuarat</SelectItem>
+                    <SelectItem value="cuti">Cuti</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -249,8 +250,8 @@ export default function StaffPresence() {
                         <SelectContent>
                           <SelectItem value="available">Available</SelectItem>
                           <SelectItem value="busy">Busy</SelectItem>
-                          <SelectItem value="meeting">Meeting</SelectItem>
-                          <SelectItem value="offline">Offline</SelectItem>
+                          <SelectItem value="meeting">Mesyuarat</SelectItem>
+                          <SelectItem value="cuti">Cuti</SelectItem>
                         </SelectContent>
                       </Select>
                     </TableCell>

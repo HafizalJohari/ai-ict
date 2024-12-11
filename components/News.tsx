@@ -35,9 +35,10 @@ export default function News() {
 
         // Fetch education news
         const eduResponse = await fetch('https://newsapi.org/v2/everything?' + new URLSearchParams({
-          q: 'education malaysia',
-          language: 'my',
-          sortBy: 'publishedAt',
+          q: 'education',
+          language: 'en',
+          domains: 'bernama.com,thestar.com.my,nst.com.my',
+          sortBy: 'publishedAt', 
           apiKey: process.env.NEXT_PUBLIC_NEWS_API_KEY || '',
           pageSize: '5'
         }))
@@ -82,7 +83,7 @@ export default function News() {
                   <h3 className="font-medium text-sm text-slate-100 line-clamp-1">
                     {item.title}
                   </h3>
-                  <div className="flex items-center gap-2 text-xs text-slate-500">
+                  <div className="flex items-center gap-2 text-xs text-slate-200">
                     <Newspaper className="h-3 w-3" />
                     <span className="truncate max-w-[100px]">{item.source.name}</span>
                     <span>•</span>
@@ -97,7 +98,7 @@ export default function News() {
                   rel="noopener noreferrer"
                   className="shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
                 >
-                  <ExternalLink className="h-4 w-4 text-slate-400 hover:text-slate-100" />
+                  <ExternalLink className="h-4 w-4 text-slate-100 hover:text-slate-100" />
                 </a>
               </div>
             </article>

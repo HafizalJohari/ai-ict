@@ -19,7 +19,11 @@ interface Message {
   content: string
 }
 
-export default function ChatBubble() {
+interface ChatBubbleProps {
+  size?: 'small' | 'medium' | 'large'
+}
+
+export default function ChatBubble({ size = 'medium' }: ChatBubbleProps) {
   // Component enabled
   const [isEnabled] = useState(true)
 
@@ -32,6 +36,27 @@ export default function ChatBubble() {
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+
+  // Add size mapping
+  const bubbleSizes = {
+    small: {
+      button: 'h-24 w-24',
+      image: '96',
+      alert: 'bottom-28'
+    },
+    medium: {
+      button: 'h-36 w-36',
+      image: '128',
+      alert: 'bottom-32'
+    },
+    large: {
+      button: 'h-48 w-48',
+      image: '160',
+      alert: 'bottom-36'
+    }
+  }
+
+  const currentSize = bubbleSizes[size]
 
   const handleSubmit = async () => {
     if (!input.trim() || isLoading) return
@@ -80,18 +105,11 @@ export default function ChatBubble() {
   }
 
   return (
-    <div className="fixed bottom-12 left-12 flex items-end">
+    <div className="fixed bottom-12 left-1/2 -translate-x-1/2 flex items-end z-50">
       {showAlert && (
-        <div className="absolute bottom-32 bg-white/20 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/30 p-6 flex items-center gap-6 mb-4">
+        <div className={`absolute ${currentSize.alert} bg-white/20 backdrop-blur-lg rounded-2xl shadow-xl border border-white/30 p-6 flex items-center gap-6 mb-4`}>
           <div className="relative">
-            <Image
-              src="/media/sara.png"
-              alt="Sara AI Assistant"
-              width={72}
-              height={72}
-              className="rounded-full ring-2 ring-white/50"
-              priority
-            />
+           
           </div>
           <div className="flex flex-col gap-2">
             <p className="text-lg text-white font-medium">Perlukan bantuan?</p>
@@ -105,7 +123,7 @@ export default function ChatBubble() {
             </Button>
           </div>
           {/* Triangle pointer */}
-          <div className="absolute -bottom-3 left-16 w-6 h-6 bg-white/20 backdrop-blur-lg border-r border-b border-white/30 transform rotate-45" />
+          <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-6 h-6 bg-white/20 backdrop-blur-lg border-r border-b border-white/30 transform rotate-45" />
         </div>
       )}
       <Dialog open={isOpen} onOpenChange={(open) => {
@@ -115,21 +133,32 @@ export default function ChatBubble() {
         <DialogTrigger asChild>
           <Button
             size="icon"
-            className="h-36 w-36 rounded-full shadow-2xl bg-white/20 hover:bg-white/30 backdrop-blur-lg transition-all duration-300 hover:scale-110 p-0 overflow-hidden border border-white/30"
+            className={`${currentSize.button} rounded-full shadow-2xl bg-white/20 hover:bg-white/30 backdrop-blur-lg transition-all duration-300 hover:scale-110 p-0 overflow-hidden border border-white/30 relative group`}
             onMouseEnter={() => setShowAlert(true)}
             onMouseLeave={() => !isOpen && setShowAlert(false)}
           >
+            {/* Pulsing rings effect */}
+            <div className="absolute inset-0 z-0">
+              <div className="absolute inset-0 animate-ping-slow opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="absolute inset-0 rounded-full border-4 border-primary/30 scale-100" />
+              </div>
+              <div className="absolute inset-0 animate-ping-slower opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="absolute inset-0 rounded-full border-4 border-primary/20 scale-110" />
+              </div>
+            </div>
+            {/* Glowing background effect */}
+            <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-secondary/20 to-primary/20 animate-gradient rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             <Image
               src="/media/sara.png"
               alt="Sara AI Assistant"
-              width={128}
-              height={128}
-              className="object-cover rounded-full ring-4 ring-white/50"
+              width={parseInt(currentSize.image)}
+              height={parseInt(currentSize.image)}
+              className="object-cover rounded-full ring-4 ring-white/50 relative z-10"
               priority
             />
           </Button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-[800px] h-[600px] flex flex-col p-0">
+        <DialogContent className="sm:max-w-[800px] h-[600px] flex flex-col p-0 z-50">
           <DialogHeader className="px-6 py-4 border-b">
             <DialogTitle className="flex items-center gap-3">
               <Image

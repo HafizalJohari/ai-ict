@@ -129,14 +129,14 @@ export default function DepartmentDisplay() {
 
   // Monitor store changes
   useEffect(() => {
-    // Subscribe to feature changes
-    const unsubFeatures = useStore.subscribe(
-      (state) => state.features,
-      (features) => {
+    // Subscribe to feature changes using the correct pattern
+    const unsubFeatures = useStore.subscribe((state, prevState) => {
+      // Only update if features have changed
+      if (state.features !== prevState.features) {
         setUpdateKey(prev => prev + 1)
-        console.log('Features updated:', features)
+        console.log('Features updated:', state.features)
       }
-    )
+    })
 
     return () => {
       unsubFeatures()
@@ -235,10 +235,6 @@ export default function DepartmentDisplay() {
             })}
           </M.AnimatePresence>
         </M.motion.div>
-
-        <aside>
-          <ChatBubble />
-        </aside>
       </div>
     </main>
   )

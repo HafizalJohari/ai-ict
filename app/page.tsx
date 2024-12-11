@@ -1,3 +1,5 @@
+'use client'
+
 import StaffPresence from '@/components/StaffPresence'
 import ActivitySchedule from '@/components/ActivitySchedule'
 import Announcements from '@/components/Announcements'

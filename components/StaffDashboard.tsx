@@ -132,6 +132,7 @@ export default function StaffDashboard() {
                 <SelectItem value="Available">Available</SelectItem>
                 <SelectItem value="Unavailable">Unavailable</SelectItem>
                 <SelectItem value="In Meeting">In Meeting</SelectItem>
+                <SelectItem value="On Leave">On Leave</SelectItem>
               </SelectContent>
             </Select>
           </div>

@@ -34,8 +34,18 @@ import {
   Users,
   Briefcase,
   Bell,
-  ListTodo
+  ListTodo,
+  MessageCircle
 } from 'lucide-react'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import Image from "next/image"
+import { Slider } from "@/components/ui/slider"
 
 function getFeatureIcon(id: string) {
   switch (id) {
@@ -130,6 +140,85 @@ function SortableItem({
         </div>
       </div>
     </li>
+  )
+}
+
+const ChatBubbleControl = () => {
+  const { chatBubbleSize, setChatBubbleSize } = useStore()
+
+  const sizeMap = {
+    small: 0,
+    medium: 50,
+    large: 100
+  }
+
+  const handleSliderChange = (value: number[]) => {
+    if (value[0] <= 25) setChatBubbleSize('small')
+    else if (value[0] <= 75) setChatBubbleSize('medium')
+    else setChatBubbleSize('large')
+  }
+
+  const getCurrentSliderValue = () => {
+    return [sizeMap[chatBubbleSize]]
+  }
+
+  const getSizeLabel = () => {
+    switch (chatBubbleSize) {
+      case 'small': return '96px'
+      case 'medium': return '128px'
+      case 'large': return '160px'
+    }
+  }
+
+  return (
+    <Card className="mt-6">
+      <CardHeader>
+        <CardTitle className="text-2xl font-semibold text-primary flex items-center gap-2">
+          <MessageCircle className="h-6 w-6" />
+          Chat Bubble Settings
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-6">
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <Label>Bubble Size</Label>
+              <span className="text-sm text-muted-foreground">{getSizeLabel()}</span>
+            </div>
+            <Slider
+              value={getCurrentSliderValue()}
+              onValueChange={handleSliderChange}
+              max={100}
+              step={1}
+              className="w-full"
+            />
+          </div>
+          
+          {/* Size Preview */}
+          <div className="border rounded-lg p-6 flex items-center justify-center bg-slate-100">
+            <div className="relative" style={{ width: getSizeLabel(), height: getSizeLabel() }}>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className={`
+                  rounded-full overflow-hidden border-4 border-white/50 shadow-lg
+                  ${chatBubbleSize === 'small' ? 'w-24 h-24' : ''}
+                  ${chatBubbleSize === 'medium' ? 'w-36 h-36' : ''}
+                  ${chatBubbleSize === 'large' ? 'w-48 h-48' : ''}
+                `}>
+                  <Image
+                    src="/media/sara.png"
+                    alt="Sara Size Preview"
+                    width={160}
+                    height={160}
+                    className="w-full h-full object-cover"
+                    priority
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   )
 }
 
@@ -257,6 +346,7 @@ export default function ControlPanel() {
           </div>
         </CardContent>
       </Card>
+      <ChatBubbleControl />
     </main>
   )
 }

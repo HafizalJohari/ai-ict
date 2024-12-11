@@ -250,12 +250,12 @@ export default function DocumentLoader() {
 
   return (
     <>
-      <Card className="bg-white/5 backdrop-blur-sm border-white/20">
-        <CardHeader>
+      <Card className="border border-border w-full max-w-none">
+        <CardHeader className="px-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <FileText className="h-5 w-5 text-primary" />
-              <CardTitle className="text-lg font-medium text-slate-100">Document Management</CardTitle>
+              <FileText className="h-5 w-5 text-muted-foreground" />
+              <CardTitle className="text-lg font-medium">Document Management</CardTitle>
             </div>
             <div className="flex flex-col items-end gap-2">
               <div className="flex items-center gap-2">
@@ -294,19 +294,19 @@ export default function DocumentLoader() {
                   <DropdownMenuContent align="end">
                     <DropdownMenuLabel>Document Stats</DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem>
+                    <DropdownMenuItem className="text-sm">
                       Total Documents: {stats.total}
                     </DropdownMenuItem>
-                    <DropdownMenuItem>
+                    <DropdownMenuItem className="text-sm">
                       Completed: {stats.completed}
                     </DropdownMenuItem>
-                    <DropdownMenuItem>
+                    <DropdownMenuItem className="text-sm">
                       Processing: {stats.processing}
                     </DropdownMenuItem>
-                    <DropdownMenuItem>
+                    <DropdownMenuItem className="text-sm">
                       Error: {stats.error}
                     </DropdownMenuItem>
-                    <DropdownMenuItem>
+                    <DropdownMenuItem className="text-sm">
                       Total Size: {bytesToSize(stats.totalSize)}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
@@ -341,95 +341,97 @@ export default function DocumentLoader() {
                 </label>
               </div>
               {uploadError && (
-                <p className="text-sm text-red-500">{uploadError}</p>
+                <p className="text-sm text-destructive">{uploadError}</p>
               )}
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-muted-foreground">
                 Supported formats: {SUPPORTED_FILE_TYPES.split(',').join(', ')} (Max {MAX_FILE_SIZE}MB)
               </p>
             </div>
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="px-6">
           {documents.length > 0 ? (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="text-slate-200">Document</TableHead>
-                  <TableHead className="text-slate-200">Upload Date</TableHead>
-                  <TableHead className="text-slate-200">Size</TableHead>
-                  <TableHead className="text-slate-200">Status</TableHead>
-                  <TableHead className="text-slate-200">Tags</TableHead>
-                  <TableHead className="text-right text-slate-200">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {documents.map((doc) => (
-                  <TableRow key={doc.id} className="border-white/10">
-                    <TableCell className="font-medium text-slate-200">
-                      <div className="flex items-center gap-2">
-                        <FileIcon className="h-4 w-4 text-primary" />
-                        {doc.name}
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-slate-400">
-                      {new Date(doc.uploadedAt).toLocaleString()}
-                    </TableCell>
-                    <TableCell className="text-slate-400">
-                      {bytesToSize(doc.fileSize)}
-                    </TableCell>
-                    <TableCell>{getStatusBadge(doc.status, doc.chunks)}</TableCell>
-                    <TableCell>
-                      <div className="flex flex-wrap gap-1">
-                        {doc.metadata?.tags?.map((tag) => (
-                          <Badge
-                            key={tag}
-                            variant="secondary"
-                            className="text-xs cursor-pointer hover:bg-red-500/20"
-                            onClick={() => removeTag(doc.id, tag)}
-                          >
-                            {tag}
-                            <X className="w-3 h-3 ml-1" />
-                          </Badge>
-                        ))}
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-5 w-5"
-                          onClick={() => setEditMetadata(doc)}
-                        >
-                          <Tags className="h-3 w-3" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-2">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => setViewDocument(doc)}
-                          className="h-8 w-8 text-slate-400 hover:text-primary"
-                        >
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => setDeleteId(doc.id)}
-                          className="h-8 w-8 text-slate-400 hover:text-red-500"
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
+            <div className="w-full overflow-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Document</TableHead>
+                    <TableHead>Upload Date</TableHead>
+                    <TableHead>Size</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Tags</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {documents.map((doc) => (
+                    <TableRow key={doc.id}>
+                      <TableCell className="font-medium">
+                        <div className="flex items-center gap-2">
+                          <FileIcon className="h-4 w-4 text-muted-foreground" />
+                          {doc.name}
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-muted-foreground">
+                        {new Date(doc.uploadedAt).toLocaleString()}
+                      </TableCell>
+                      <TableCell className="text-muted-foreground">
+                        {bytesToSize(doc.fileSize)}
+                      </TableCell>
+                      <TableCell>{getStatusBadge(doc.status, doc.chunks)}</TableCell>
+                      <TableCell>
+                        <div className="flex flex-wrap gap-1">
+                          {doc.metadata?.tags?.map((tag) => (
+                            <Badge
+                              key={tag}
+                              variant="secondary"
+                              className="text-xs cursor-pointer hover:bg-destructive/20"
+                              onClick={() => removeTag(doc.id, tag)}
+                            >
+                              {tag}
+                              <X className="w-3 h-3 ml-1" />
+                            </Badge>
+                          ))}
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-5 w-5"
+                            onClick={() => setEditMetadata(doc)}
+                          >
+                            <Tags className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex justify-end gap-2">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => setViewDocument(doc)}
+                            className="h-8 w-8 text-muted-foreground hover:text-primary"
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => setDeleteId(doc.id)}
+                            className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           ) : (
-            <div className="text-center py-8 text-slate-400">
-              <FileText className="w-12 h-12 mx-auto mb-4 opacity-50" />
-              <p>No documents uploaded yet.</p>
-              <p className="text-sm mt-1">Upload documents to start processing.</p>
+            <div className="text-center py-8">
+              <FileText className="w-12 h-12 mx-auto mb-4 text-muted-foreground/50" />
+              <p className="text-muted-foreground">No documents uploaded yet.</p>
+              <p className="text-sm mt-1 text-muted-foreground">Upload documents to start processing.</p>
             </div>
           )}
         </CardContent>
@@ -456,7 +458,7 @@ export default function DocumentLoader() {
             ))}
           </div>
           <ScrollArea className="h-[500px] w-full rounded-md border p-4">
-            <pre className="text-sm whitespace-pre-wrap font-mono">
+            <pre className="text-sm whitespace-pre-wrap font-mono text-foreground">
               {viewDocument?.content}
             </pre>
           </ScrollArea>

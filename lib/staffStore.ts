@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
-export type StaffStatus = 'available' | 'busy' | 'meeting' | 'offline'
+export type StaffStatus = 'available' | 'busy' | 'meeting' | 'cuti'
 
 export interface Staff {
   id: string

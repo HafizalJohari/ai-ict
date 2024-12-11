@@ -24,6 +24,24 @@ import {
 } from "@/components/ui/popover"
 import { cn } from "@/lib/utils"
 
+// First, let's define the event types properly
+type EventType = 'mesyuarat' | 'latihan' | 'cuti' | 'program' | 'lain-lain'
+type EventStatus = 'akan datang' | 'sedang berlangsung' | 'selesai' | 'dibatalkan'
+
+interface EventFormData {
+  title: string
+  description: string
+  date: Date
+  startTime: string
+  endTime: string
+  location: string
+  organizer: string
+  type: EventType
+  staffInCharge: string
+  status?: EventStatus
+  participants?: string[]
+}
+
 interface EventFormProps {
   onSubmit: (data: any) => void
   initialData?: Event
@@ -32,16 +50,18 @@ interface EventFormProps {
 
 export default function EventForm({ onSubmit, initialData, isEditing = false }: EventFormProps) {
   const { staffList } = useStaffStore()
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<EventFormData>({
     title: '',
     description: '',
     date: new Date(),
-    startTime: '09:00',
-    endTime: '17:00',
+    startTime: '',
+    endTime: '',
     location: '',
     organizer: '',
-    type: 'meeting' as const,
-    staffInCharge: ''
+    type: 'mesyuarat',
+    staffInCharge: '',
+    status: 'akan datang',
+    participants: []
   })
 
   // Set date range (5 years past to 5 years future)
@@ -89,8 +109,8 @@ export default function EventForm({ onSubmit, initialData, isEditing = false }: 
     }
   }
 
-  // Filter available staff (not offline)
-  const availableStaff = staffList.filter(staff => staff.status !== 'offline')
+  // Filter available staff (not on leave)
+  const availableStaff = staffList.filter(staff => staff.status !== 'cuti')
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
@@ -218,16 +238,19 @@ export default function EventForm({ onSubmit, initialData, isEditing = false }: 
         <Label htmlFor="type">Event Type</Label>
         <Select
           value={formData.type}
-          onValueChange={handleSelectChange('type')}
+          onValueChange={(value: EventType) =>
+            setFormData((prev) => ({ ...prev, type: value }))
+          }
         >
           <SelectTrigger>
             <SelectValue placeholder="Select event type" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="meeting">Meeting</SelectItem>
-            <SelectItem value="training">Training</SelectItem>
-            <SelectItem value="holiday">Holiday</SelectItem>
-            <SelectItem value="other">Other</SelectItem>
+            <SelectItem value="mesyuarat">Mesyuarat</SelectItem>
+            <SelectItem value="latihan">Latihan</SelectItem>
+            <SelectItem value="cuti">Cuti</SelectItem>
+            <SelectItem value="program">Program</SelectItem>
+            <SelectItem value="lain-lain">Lain-lain</SelectItem>
           </SelectContent>
         </Select>
       </div>
