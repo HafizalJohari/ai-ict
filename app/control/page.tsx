@@ -35,8 +35,18 @@ import {
   Briefcase,
   Bell,
   ListTodo,
-  MessageCircle
+  MessageCircle,
+  Timer,
+  AlertCircle
 } from 'lucide-react'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog"
 import {
   Select,
   SelectContent,
@@ -46,6 +56,7 @@ import {
 } from "@/components/ui/select"
 import Image from "next/image"
 import { Slider } from "@/components/ui/slider"
+import CountdownManager from '@/components/CountdownManager'
 
 function getFeatureIcon(id: string) {
   switch (id) {
@@ -63,6 +74,8 @@ function getFeatureIcon(id: string) {
       return <Bell className="h-4 w-4" />
     case 'activity':
       return <ListTodo className="h-4 w-4" />
+    case 'countdown':
+      return <Timer className="h-4 w-4" />
     default:
       return null
   }
@@ -225,6 +238,7 @@ const ChatBubbleControl = () => {
 export default function ControlPanel() {
   const { features, setFeatures, toggleFeature, resetFeatures, updateFeatureWidth } = useStore()
   const [debugInfo, setDebugInfo] = useState(false)
+  const [showResetDialog, setShowResetDialog] = useState(false)
   
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -240,7 +254,6 @@ export default function ControlPanel() {
       const oldIndex = features.findIndex((item) => item.id === active.id)
       const newIndex = features.findIndex((item) => item.id === over.id)
       
-      // Update the order of features
       const newFeatures = arrayMove(features, oldIndex, newIndex).map((feature, index) => ({
         ...feature,
         order: index
@@ -251,13 +264,9 @@ export default function ControlPanel() {
   }
 
   const handleForceReset = () => {
-    // Force reset to default features
-    setFeatures(defaultFeatures)
-    // Clear local storage
-    if (typeof window !== 'undefined') {
-      window.localStorage.removeItem('department-features-storage')
-      window.location.reload()
-    }
+    resetFeatures()
+    setShowResetDialog(false)
+    window.location.reload()
   }
 
   return (
@@ -273,7 +282,7 @@ export default function ControlPanel() {
             {debugInfo ? 'Hide Debug Info' : 'Show Debug Info'}
           </Button>
           <Button 
-            onClick={handleForceReset}
+            onClick={() => setShowResetDialog(true)}
             variant="outline"
             size="sm"
             className="bg-destructive/10 hover:bg-destructive/20 text-destructive"
@@ -283,6 +292,42 @@ export default function ControlPanel() {
           </Button>
         </div>
       </div>
+
+      <Dialog open={showResetDialog} onOpenChange={setShowResetDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <AlertCircle className="h-5 w-5 text-destructive" />
+              Confirm Reset
+            </DialogTitle>
+            <DialogDescription className="space-y-2 pt-2">
+              <p>Are you sure you want to reset the layout?</p>
+              <div className="rounded-md bg-muted p-3 text-sm">
+                <p className="font-medium">Note:</p>
+                <ul className="list-disc list-inside space-y-1 mt-1">
+                  <li>Assets settings will be preserved</li>
+                  <li>Countdown data will be preserved</li>
+                  <li>All other features will be reset to default</li>
+                </ul>
+              </div>
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex gap-2 sm:gap-0">
+            <Button
+              variant="outline"
+              onClick={() => setShowResetDialog(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleForceReset}
+            >
+              Reset Layout
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {debugInfo && (
         <Card>
@@ -347,6 +392,7 @@ export default function ControlPanel() {
         </CardContent>
       </Card>
       <ChatBubbleControl />
+      <CountdownManager />
     </main>
   )
 }

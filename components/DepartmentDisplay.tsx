@@ -10,6 +10,7 @@ import PrayerTimes from './PrayerTimes'
 import ChatBubble from './ChatBubble'
 import News from './News'
 import MonthlyCalendar from './MonthlyCalendar'
+import CountdownDisplay from './CountdownDisplay'
 import * as M from 'framer-motion'
 import { Clock, Calendar } from 'lucide-react'
 
@@ -21,6 +22,7 @@ const featureComponents = {
   activity: ActivitySchedule,
   assets: AssetOverview,
   announcements: AnnouncementOverview,
+  countdown: CountdownDisplay,
 }
 
 function ClockDisplay() {
@@ -97,7 +99,7 @@ function ClockDisplay() {
 
           {/* Center: Title and Subtitle */}
           <div className="text-center space-y-1">
-            <h1 className="text-xl md:text-1xl font-bold text-slate-200 tracking-wide">
+            <h1 className="text-xl md:text-2xl font-bold text-slate-200 tracking-wide">
               AI Integrated Digital Display
             </h1>
             <p className="text-xs md:text-sm text-slate-400 italic">
@@ -107,7 +109,7 @@ function ClockDisplay() {
           
           {/* Right: Date and Time */}
           <div className="flex flex-col items-center md:items-end gap-1">
-            <span className="text-lg md:text-xl font-medium text-slate-200">
+            <span className="text-lg md:text-3xl font-medium text-slate-200">
               {formatTime(time)}
             </span>
             <span className="text-sm md:text-base text-slate-300">

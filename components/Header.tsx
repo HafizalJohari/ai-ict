@@ -41,12 +41,12 @@ export default function Header() {
         <div className="w-full px-4 py-3 flex justify-between items-center">
           <div className="flex items-center space-x-4">
             <SidebarTrigger />
-            <span className="text-xl font-bold text-white">ICT PPD JB</span>
-            <h1 className="text-2xl font-bold text-white">Buletin Board</h1>
+            <span className="text-xl font-bold text-slate-950">ICT PPD JB</span>
+            <h1 className="text-2xl font-bold text-slate-950 text-center">AI Integrated Digital Display</h1>
           </div>
           <div className="flex items-center space-x-4">
             {/* Only render time when it's available (client-side) */}
-            {currentTime && <p className="text-lg text-white">{currentTime}</p>}
+            {currentTime && <p className="text-lg text-slate-950">{currentTime}</p>}
           </div>
         </div>
       </div>

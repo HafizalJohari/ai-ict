@@ -35,7 +35,7 @@ export default function CalendarPage() {
   return (
     <main className="container mx-auto p-4 space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-primary">Department Calendar</h1>
+        <h1 className="text-3xl font-bold text-primary text-slate-950">Department Calendar</h1>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button className="bg-primary text-primary-foreground hover:bg-primary/90">

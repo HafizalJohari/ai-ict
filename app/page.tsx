@@ -13,7 +13,7 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
-            <CardTitle className="text-2xl font-semibold text-primary">Staff Presence</CardTitle>
+            <CardTitle className="text-2xl font-semibold text-primary text-slate-950">Staff Presence</CardTitle>
           </CardHeader>
           <CardContent>
             <StaffPresence />
@@ -21,7 +21,7 @@ export default function Dashboard() {
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle className="text-2xl font-semibold text-primary">Activity Schedule</CardTitle>
+            <CardTitle className="text-2xl font-semibold text-primary text-slate-950  ">Activity Schedule</CardTitle>
           </CardHeader>
           <CardContent>
             <ActivitySchedule />
