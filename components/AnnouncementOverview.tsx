@@ -76,7 +76,7 @@ export default function AnnouncementOverview() {
   })
 
   return (
-    <Card className="bg-white/5 backdrop-blur-sm border-white/20">
+    <Card className="bg-white/5 backdrop-blur-sm border-white/20 w-full">
       <CardContent className="p-4">
         <ScrollArea className={`pr-4 transition-all duration-300`} style={{ height: contentHeight }}>
           <div className="space-y-3">
@@ -127,4 +127,3 @@ export default function AnnouncementOverview() {
     </Card>
   )
 }
-

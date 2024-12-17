@@ -102,7 +102,7 @@ function ClockDisplay() {
             <h1 className="text-xl md:text-2xl font-bold text-slate-200 tracking-wide">
               AI Integrated Digital Display
             </h1>
-            <p className="text-xs md:text-sm text-slate-400 italic">
+            <p className="text-xs md:text-sm text-slate-200 italic">
               - Dibangunkan oleh Unit ICT PPD Johor Bahru -
             </p>
           </div>
@@ -145,8 +145,6 @@ export default function DepartmentDisplay() {
     }
   }, [])
 
-  // ElevenLabs widget temporarily disabled
-  /*
   useEffect(() => {
     const script = document.createElement('script')
     script.src = 'https://elevenlabs.io/convai-widget/index.js'
@@ -165,7 +163,6 @@ export default function DepartmentDisplay() {
       }
     }
   }, [])
-  */
 
   if (enabledFeatures.length === 0) {
     return (

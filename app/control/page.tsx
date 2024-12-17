@@ -270,8 +270,8 @@ export default function ControlPanel() {
   }
 
   return (
-    <main className="container mx-auto p-4 space-y-6">
-      <div className="flex justify-between items-center">
+    <main className="max-w-full p-4 space-y-6">
+      <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold text-primary">Control Panel</h1>
         <div className="flex gap-2">
           <Button
@@ -290,6 +290,78 @@ export default function ControlPanel() {
             <RefreshCcw className="h-4 w-4 mr-2" />
             Force Reset
           </Button>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 xl:grid-cols-[2fr,1fr] gap-6">
+        <div className="space-y-6">
+          {debugInfo && (
+            <Card>
+              <CardContent className="pt-6">
+                <pre className="text-xs overflow-auto">
+                  {JSON.stringify(features, null, 2)}
+                </pre>
+              </CardContent>
+            </Card>
+          )}
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-2xl font-semibold text-primary">
+                Layout Management
+              </CardTitle>
+              <p className="text-sm text-muted-foreground mt-1">
+                Drag and drop items to reorder, toggle visibility, or change width of sections.
+              </p>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="flex gap-6 text-sm text-muted-foreground border-b pb-4">
+                  <div className="flex items-center gap-2">
+                    <GripVertical className="h-4 w-4" />
+                    <span>Drag to reorder</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Maximize2 className="h-4 w-4" />
+                    <span>Toggle width</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Switch className="pointer-events-none" />
+                    <span>Toggle visibility</span>
+                  </div>
+                </div>
+                
+                <DndContext
+                  sensors={sensors}
+                  collisionDetection={closestCenter}
+                  onDragEnd={handleDragEnd}
+                >
+                  <SortableContext
+                    items={features}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    <ul className="space-y-2">
+                      {features
+                        .sort((a, b) => a.order - b.order)
+                        .map((feature) => (
+                          <SortableItem 
+                            key={feature.id} 
+                            feature={feature} 
+                            onToggle={toggleFeature}
+                            onWidthChange={updateFeatureWidth}
+                          />
+                        ))}
+                    </ul>
+                  </SortableContext>
+                </DndContext>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="space-y-6">
+          <ChatBubbleControl />
+          <CountdownManager />
         </div>
       </div>
 
@@ -328,71 +400,6 @@ export default function ControlPanel() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-
-      {debugInfo && (
-        <Card>
-          <CardContent className="pt-6">
-            <pre className="text-xs overflow-auto">
-              {JSON.stringify(features, null, 2)}
-            </pre>
-          </CardContent>
-        </Card>
-      )}
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-2xl font-semibold text-primary">
-            Layout Management
-          </CardTitle>
-          <p className="text-sm text-muted-foreground mt-1">
-            Drag and drop items to reorder, toggle visibility, or change width of sections.
-          </p>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="flex gap-6 text-sm text-muted-foreground border-b pb-4">
-              <div className="flex items-center gap-2">
-                <GripVertical className="h-4 w-4" />
-                <span>Drag to reorder</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Maximize2 className="h-4 w-4" />
-                <span>Toggle width</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Switch className="pointer-events-none" />
-                <span>Toggle visibility</span>
-              </div>
-            </div>
-            
-            <DndContext
-              sensors={sensors}
-              collisionDetection={closestCenter}
-              onDragEnd={handleDragEnd}
-            >
-              <SortableContext
-                items={features}
-                strategy={verticalListSortingStrategy}
-              >
-                <ul className="space-y-2">
-                  {features
-                    .sort((a, b) => a.order - b.order)
-                    .map((feature) => (
-                      <SortableItem 
-                        key={feature.id} 
-                        feature={feature} 
-                        onToggle={toggleFeature}
-                        onWidthChange={updateFeatureWidth}
-                      />
-                    ))}
-                </ul>
-              </SortableContext>
-            </DndContext>
-          </div>
-        </CardContent>
-      </Card>
-      <ChatBubbleControl />
-      <CountdownManager />
     </main>
   )
 }

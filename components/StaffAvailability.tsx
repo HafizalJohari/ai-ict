@@ -18,22 +18,30 @@ export default function StaffAvailability() {
         if (!response.ok) throw new Error('Failed to fetch staff data')
         const data = await response.json()
         
-        // Filter for today's entries only
+        // Debug log
+        console.log('Raw data from API:', data)
+        
+        // Ensure timestamps are valid and filter for today's entries
         const todayData = data.filter((staff: StaffData) => {
-          try {
-            return isToday(new Date(staff.timestamp))
-          } catch {
-            return false
-          }
+          if (!staff.timestamp) return false
+          
+          // Parse the timestamp - assuming it's in the format from Google Forms
+          const date = new Date(staff.timestamp)
+          if (isNaN(date.getTime())) return false
+          
+          return isToday(startOfDay(date))
         })
 
         // Sort by timestamp, most recent first
-        const sortedData = todayData.sort((a: StaffData, b: StaffData) => 
-          new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-        )
+        const sortedData = todayData.sort((a: StaffData, b: StaffData) => {
+          const dateA = new Date(a.timestamp)
+          const dateB = new Date(b.timestamp)
+          return dateB.getTime() - dateA.getTime()
+        })
         
         setStaffList(sortedData)
       } catch (err) {
+        console.error('Fetch error:', err)
         setError(err instanceof Error ? err.message : 'Failed to fetch staff data')
       } finally {
         setLoading(false)
@@ -65,8 +73,10 @@ export default function StaffAvailability() {
   }, [])
 
   const getStatusColor = (status: string) => {
+    if (!status) return 'text-gray-500'
+    
     const statusLower = status.toLowerCase()
-    if (statusLower.includes('available')) return 'text-green-500'
+    if (statusLower.includes('available') || statusLower.includes('berada di pejabat')) return 'text-green-500'
     if (statusLower.includes('busy')) return 'text-yellow-500'
     if (statusLower.includes('meeting')) return 'text-orange-500'
     if (statusLower.includes('leave') || statusLower.includes('cuti')) return 'text-red-500'
@@ -74,10 +84,23 @@ export default function StaffAvailability() {
   }
 
   const formatTimestamp = (timestamp: string) => {
+    if (!timestamp) {
+      console.log('Empty timestamp')
+      return 'Invalid date'
+    }
+    
     try {
       const date = new Date(timestamp)
-      return format(date, 'dd/MM/yyyy h:mm a')
+      if (isNaN(date.getTime())) {
+        console.log('Invalid timestamp format:', timestamp)
+        return 'Invalid date'
+      }
+      
+      // Convert UTC to local time and format
+      const localDate = new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
+      return format(localDate, 'dd/MM/yyyy h:mm a')
     } catch (error) {
+      console.error('Date formatting error:', error, 'for timestamp:', timestamp)
       return 'Invalid date'
     }
   }
@@ -98,16 +121,7 @@ export default function StaffAvailability() {
     <Card className="bg-white/5 backdrop-blur-sm border-white/20">
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="text-lg font-medium text-slate-100">Staff Availability</CardTitle>
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 text-xs text-amber-100">
-            <AlertCircle className="h-4 w-4" />
-            <span>Resets at midnight</span>
-          </div>
-          <div className="flex items-center gap-2 text-xs text-slate-100">
-            <Clock className="h-4 w-4" />
-            <span>Auto updates every 5 min</span>
-          </div>
-        </div>
+        
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
@@ -136,15 +150,15 @@ export default function StaffAvailability() {
                 <div className="flex justify-between items-center text-xs text-slate-100">
                   <span>{staff.department}</span>
                   <div className="flex items-center gap-1">
-                    <Clock className="h-3 w-3" />
+                    <Clock className="h-3 w-3" text-slate-100/>
                     <span>Updated: {formatTimestamp(staff.timestamp)}</span>
                   </div>
                 </div>
               </div>
             ))
           ) : (
-            <div className="text-center text-slate-100 py-8">
-              No staff updates for today
+            <div className="text-center text-amber-400 py-8">
+              All staff are available today
             </div>
           )}
         </div>

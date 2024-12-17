@@ -33,17 +33,70 @@ export async function GET() {
     // Get all rows
     const rows = await sheet.getRows()
     
-    // Map the rows to our staff data structure
-    const staffData: StaffData[] = rows.map(row => ({
-      timestamp: row.get('Timestamp'),
-      name: row.get('Name'),
-      position: row.get('Position'),
-      department: row.get('Department'),
-      status: row.get('Status'),
-      email: row.get('Email')
-    }))
+    // Map the rows to our staff data structure with timestamp handling
+    const staffData: StaffData[] = rows
+      .map(row => {
+        // Get raw timestamp from Google Sheet
+        const rawTimestamp = row.get('Timestamp')
+        
+        // Skip invalid entries
+        if (!rawTimestamp || !row.get('Name') || !row.get('Status')) {
+          console.log('Skipping invalid row:', row)
+          return null
+        }
 
-    // Return the data
+        // Convert DD/MM/YYYY HH:MM:SS to ISO string
+        let timestamp: string
+        try {
+          // Split the date and time parts
+          const [datePart, timePart] = rawTimestamp.split(',')[0].split(' ')
+          const [day, month, year] = datePart.split('/')
+          
+          // Parse time - handle both "HH:MM:SS" and "HH:MM:SS AM/PM" formats
+          let hours = 0, minutes = 0, seconds = 0
+          if (timePart) {
+            const timeMatch = timePart.match(/(\d+):(\d+):(\d+)/)
+            if (timeMatch) {
+              [, hours, minutes, seconds] = timeMatch.map(Number)
+              
+              // Adjust for AM/PM if present
+              if (timePart.toLowerCase().includes('pm') && hours < 12) {
+                hours += 12
+              }
+              if (timePart.toLowerCase().includes('am') && hours === 12) {
+                hours = 0
+              }
+            }
+          }
+          
+          // Create date object with local timezone
+          const date = new Date(
+            parseInt(year),
+            parseInt(month) - 1, // Months are 0-based in JavaScript
+            parseInt(day),
+            hours,
+            minutes,
+            seconds
+          )
+          
+          timestamp = date.toISOString()
+        } catch (error) {
+          console.log('Error parsing timestamp:', rawTimestamp, error)
+          return null
+        }
+
+        return {
+          timestamp,
+          name: row.get('Name'),
+          position: row.get('Position'),
+          department: row.get('Department'),
+          status: row.get('Status'),
+          email: row.get('Email')
+        }
+      })
+      .filter((data): data is StaffData => data !== null)
+
+    console.log('Processed staff data:', staffData) // Debug log
     return NextResponse.json(staffData)
   } catch (error) {
     console.error('Error fetching staff data:', error)

@@ -25,7 +25,7 @@ interface ChatBubbleProps {
 
 export default function ChatBubble({ size = 'medium' }: ChatBubbleProps) {
   // Component enabled
-  const [isEnabled] = useState(true)
+  const [isEnabled] = useState(false)
 
   if (!isEnabled) {
     return null
