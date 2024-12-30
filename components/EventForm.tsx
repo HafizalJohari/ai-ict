@@ -37,15 +37,20 @@ interface EventFormData {
 
 interface EventFormProps {
   event?: Event
+  selectedDate?: Date
   onSubmit: (data: Partial<Event>) => void
 }
 
-export default function EventForm({ event, onSubmit }: EventFormProps) {
+export default function EventForm({ event, selectedDate, onSubmit }: EventFormProps) {
   const form = useForm<EventFormData>({
     defaultValues: {
       title: event?.title || '',
       description: event?.description || '',
-      date: event?.date ? format(new Date(event.date), 'yyyy-MM-dd') : '',
+      date: selectedDate 
+        ? format(selectedDate, 'yyyy-MM-dd')
+        : event?.date 
+          ? format(new Date(event.date), 'yyyy-MM-dd')
+          : format(new Date(), 'yyyy-MM-dd'),
       time: event?.time || '',
       type: event?.type || 'other',
       location: event?.location || '',
@@ -65,6 +70,11 @@ export default function EventForm({ event, onSubmit }: EventFormProps) {
   const handleSubmit: SubmitHandler<EventFormData> = (data) => {
     try {
       const parsedDate = parse(data.date, 'yyyy-MM-dd', new Date())
+      if (data.time) {
+        const [hours, minutes] = data.time.split(':')
+        parsedDate.setHours(parseInt(hours, 10), parseInt(minutes, 10))
+      }
+      
       const eventData: Partial<Event> = {
         ...data,
         date: parsedDate,
@@ -86,7 +96,7 @@ export default function EventForm({ event, onSubmit }: EventFormProps) {
             <FormItem>
               <FormLabel>Title</FormLabel>
               <FormControl>
-                <Input {...field} />
+                <Input placeholder="Enter event title" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -100,7 +110,11 @@ export default function EventForm({ event, onSubmit }: EventFormProps) {
             <FormItem>
               <FormLabel>Description</FormLabel>
               <FormControl>
-                <Textarea {...field} />
+                <Textarea 
+                  placeholder="Enter event description" 
+                  className="resize-none" 
+                  {...field} 
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -115,7 +129,10 @@ export default function EventForm({ event, onSubmit }: EventFormProps) {
               <FormItem>
                 <FormLabel>Date</FormLabel>
                 <FormControl>
-                  <Input type="date" {...field} />
+                  <Input 
+                    type="date" 
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -129,7 +146,10 @@ export default function EventForm({ event, onSubmit }: EventFormProps) {
               <FormItem>
                 <FormLabel>Time</FormLabel>
                 <FormControl>
-                  <Input type="time" {...field} />
+                  <Input 
+                    type="time" 
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -168,7 +188,7 @@ export default function EventForm({ event, onSubmit }: EventFormProps) {
             <FormItem>
               <FormLabel>Location</FormLabel>
               <FormControl>
-                <Input {...field} />
+                <Input placeholder="Enter location" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

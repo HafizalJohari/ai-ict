@@ -50,6 +50,15 @@ const initialStaff: Staff[] = [
     email: 'hafsah@example.com',
     lastUpdated: new Date(),
   },
+  {
+    id: '4',
+    name: 'ICT PPDJB',
+    position: 'F1',
+    department: 'ICT',
+    status: 'available',
+    email: 'ictppdjb@moe.gov.my',
+    lastUpdated: new Date(),
+  }
 ]
 
 export const useStaffStore = create<StaffState>()(

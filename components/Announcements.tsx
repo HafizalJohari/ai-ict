@@ -109,13 +109,13 @@ export default function Announcements() {
     <Card className="bg-white/5 backdrop-blur-sm border-white/20">
       <CardContent className="p-6">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold text-slate-100">Announcements</h2>
+          <h2 className="text-xl font-semibold text-slate-950">Announcements   </h2>
           <Button
             variant="outline"
             onClick={() => handleOpenDialog()}
             className="flex items-center gap-2"
           >
-            <Plus className="h-4 w-4" /> New Announcement
+            <Plus className="h-3 w-3" /> New Announcement
           </Button>
         </div>
 

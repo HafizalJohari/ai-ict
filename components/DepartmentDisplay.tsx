@@ -11,6 +11,7 @@ import ChatBubble from './ChatBubble'
 import News from './News'
 import MonthlyCalendar from './MonthlyCalendar'
 import CountdownDisplay from './CountdownDisplay'
+import Video from './Video'
 import * as M from 'framer-motion'
 import { Clock, Calendar } from 'lucide-react'
 
@@ -23,6 +24,7 @@ const featureComponents = {
   assets: AssetOverview,
   announcements: AnnouncementOverview,
   countdown: CountdownDisplay,
+  video: Video,
 }
 
 function ClockDisplay() {

@@ -135,7 +135,7 @@ export default function MonthlyPlanner() {
             {events[currentIndex] && (
               <>
                 {title === "Upcoming Events" && (
-                  <div className="text-xs text-slate-400 mb-1">
+                  <div className="text-xs text-slate-100 mb-1">
                     {format(new Date(events[currentIndex].date), 'EEEE, MMMM d')}
                   </div>
                 )}
@@ -153,19 +153,19 @@ export default function MonthlyPlanner() {
       <CardHeader>
         <div className="flex items-center gap-2">
           <CalendarIcon className="h-5 w-5 text-primary" />
-          <CardTitle className="text-lg font-medium text-slate-100">Monthly Planner</CardTitle>
+          <CardTitle className="text-lg font-medium text-slate-100">PERANCANGAN BULANAN</CardTitle>
         </div>
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
           <MarqueeEvents 
             events={todayEvents} 
-            title="Today's Events" 
+            title="ACARA HARI INI" 
             count={todayEvents.length} 
           />
           <MarqueeEvents 
             events={upcomingEvents} 
-            title="Upcoming Events" 
+            title="ACARA AKAN DATANG" 
             count={upcomingEvents.length} 
           />
         </div>

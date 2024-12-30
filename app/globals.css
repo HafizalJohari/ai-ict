@@ -75,3 +75,28 @@
   }
 }
 
+@keyframes marquee {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-100%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 30s linear infinite;
+  animation-delay: 0s;
+}
+
+.animate-marquee2 {
+  animation: marquee 30s linear infinite;
+  animation-delay: 15s;
+}
+
+/* Pause animation on hover */
+.animate-marquee:hover,
+.animate-marquee2:hover {
+  animation-play-state: paused;
+}
+

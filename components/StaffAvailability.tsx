@@ -120,7 +120,7 @@ export default function StaffAvailability() {
   return (
     <Card className="bg-white/5 backdrop-blur-sm border-white/20">
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-lg font-medium text-slate-100">Staff Availability</CardTitle>
+        <CardTitle className="text-lg font-medium text-slate-100">KEBERADAAN PEGAWAI UNIT ICT</CardTitle>
         
       </CardHeader>
       <CardContent>

@@ -57,6 +57,7 @@ import {
 import Image from "next/image"
 import { Slider } from "@/components/ui/slider"
 import CountdownManager from '@/components/CountdownManager'
+import MediaSettings from '@/components/MediaSettings'
 
 function getFeatureIcon(id: string) {
   switch (id) {
@@ -186,8 +187,8 @@ const ChatBubbleControl = () => {
   return (
     <Card className="mt-6">
       <CardHeader>
-        <CardTitle className="text-2xl font-semibold text-primary flex items-center gap-2">
-          <MessageCircle className="h-6 w-6" />
+        <CardTitle className="text-2xl font-semibold text-primary flex items-center gap-2  text-slate-950">
+          <MessageCircle className="h-6 w-6 text-slate-950" />
           Chat Bubble Settings
         </CardTitle>
       </CardHeader>
@@ -272,7 +273,7 @@ export default function ControlPanel() {
   return (
     <main className="max-w-full p-4 space-y-6">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold text-primary">Control Panel</h1>
+        <h1 className="text-3xl font-bold text-primary text-slate-950">Control Panel</h1>
         <div className="flex gap-2">
           <Button
             variant="outline"
@@ -307,7 +308,7 @@ export default function ControlPanel() {
 
           <Card>
             <CardHeader>
-              <CardTitle className="text-2xl font-semibold text-primary">
+              <CardTitle className="text-2xl font-semibold text-primary text-slate-950">
                 Layout Management
               </CardTitle>
               <p className="text-sm text-muted-foreground mt-1">
@@ -361,6 +362,7 @@ export default function ControlPanel() {
 
         <div className="space-y-6">
           <ChatBubbleControl />
+          <MediaSettings />
           <CountdownManager />
         </div>
       </div>
